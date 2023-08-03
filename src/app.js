@@ -13,9 +13,9 @@ dotenv.config();
 
 
 
-app.use(gamesRouter)
-app.use(customersRouter)
-app.use(rentalsRouter)
+app.use(authRouter)
+app.use(urlsRouter)
+app.use(mainRouter)
 
 
 const port = process.env.PORT || 5000;
