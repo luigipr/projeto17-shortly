@@ -1,6 +1,6 @@
-import { db } from "../db/database.connection.js"
+import { db } from "../db/db.connection.js"
 
-export async function validateAuth(req, res, next) {
+export async function validateToken(req, res, next) {
     const { authorization } = req.headers
     const token = authorization?.replace("Bearer ", "")
 
