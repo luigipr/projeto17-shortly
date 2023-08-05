@@ -86,6 +86,7 @@ export async function myUrls(req, res) {
         const user = userQ.rows[0]
  //       if (!user) return res.sendStatus(404)
         const shortenedUrls = await db.query(`SELECT * FROM urls WHERE urls."userId" = $1`, [session.userId])
+        if (shortenedUrls[0].id === null) shortenedUrls = []
         const userUrls = shortenedUrls.rows.map((url) => ({
             id: url.id,
             shortUrl: url.shortUrl,

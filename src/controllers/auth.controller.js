@@ -12,7 +12,7 @@ export async function signin(req , res) {
             const user = await db.query(`SELECT * from users WHERE users.email = $1`, [email])
             //db.collection("usuarios").findOne({email})
             console.log(user.rows)
-            if (!user.rowCount === 0) return res.status(404).send("Usuário não cadastrado")
+            if (!user.rowCount === 0) return res.status(401).send("Usuário não cadastrado")
     
             const correctPW = bcrypt.compareSync(password, user.rows[0].password)
             if (!correctPW) return res.status(401).send("Senha incorreta")
@@ -21,7 +21,7 @@ export async function signin(req , res) {
             await db.query(`DELETE FROM sessions WHERE sessions."userId" = $1`, [user.rows[0].id])
             //db.collection("sessions").deleteMany({ userID: user._id })    
 
-            
+
             const token = uuid()
 
             const answer = await db.query(`INSERT INTO sessions (token, "userId") VALUES ($1, $2)`, [token, user.rows[0].id])
