@@ -66,8 +66,8 @@ export async function deleteUrl(req,res) {
     const session = res.locals.session
     const {id} = req.params    
     try {
-        const url = await db.query(`SELECT * FROM urls where urls.id = $1`, [session.userId]).rows
-        if(!url[0]) return res.sendStatus(401);
+        const url = await db.query(`SELECT * FROM urls where urls.id = $1`, [session.userId])
+        if(url.rowCount === 0) return res.sendStatus(404);
 
         await db.query(`DELETE FROM urls WHERE urls.id = $1`, [id])
 
@@ -77,7 +77,6 @@ export async function deleteUrl(req,res) {
         res.status(500).send(err.message)
     }
 }
-
 
 
 export async function myUrls(req, res) {
@@ -110,6 +109,20 @@ export async function myUrls(req, res) {
         };
 
         res.status(200).send(response)
+    } catch (err) {
+        console.log(err)
+        res.status(500).send(err.message)
+    }
+}
+
+export async function ranking(req, res) {
+    try {
+        const result = await db.query(`SELECT users.id, users.name, COUNT(urls.id) AS "linksCount", COALESCE(SUM(urls."visitCount"), 0) 
+        AS "visitCount" FROM users LEFT JOIN urls ON users.id = urls."userId" GROUP BY users.id ORDER BY "visitCount" DESC LIMIT 10`)
+        //(`SELECT user.id, user.name, COUNT(urls.id) AS "linksCount", COALESCE(SUM(urls."visitCount"), 0) AS "visitCount" FROM users LEFT JOIN urls ON user.id = urls."userId" GROUP BY users ORDER BY "visitCount" DESC LIMIT 10`)
+        console.log(result)
+
+        res.status(200).send(result.rows)
     } catch (err) {
         console.log(err)
         res.status(500).send(err.message)
