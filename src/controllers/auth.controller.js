@@ -12,7 +12,7 @@ export async function signin(req , res) {
             const user = await db.query(`SELECT * from users WHERE users.email = $1`, [email])
             //db.collection("usuarios").findOne({email})
             console.log(user.rows)
-            if (!user.rowCount === 0) return res.status(401).send("Usuário não cadastrado")
+            if (user.rowCount === 0) return res.status(401).send("Usuário não cadastrado")
     
             const correctPW = bcrypt.compareSync(password, user.rows[0].password)
             if (!correctPW) return res.status(401).send("Senha incorreta")

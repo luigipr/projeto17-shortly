@@ -47,8 +47,10 @@ export async function openUrl(req, res) {
     try {
     const url = await db.query(`SELECT * FROM urls WHERE urls."shortUrl" = $1`, [shortUrl])
     if (url.rows.length === 0) return res.sendStatus(404)
-    const visitCount = url.rows[0].visitCount + 1
-
+    let visitCount = url.rows[0].visitCount
+    console.log(visitCount)
+    visitCount++
+    console.log(visitCount)
     await db.query(`UPDATE urls SET "visitCount" = $1 WHERE "shortUrl" = $2`, [visitCount, shortUrl]);
 
     res.redirect(url.rows[0].url);
@@ -83,10 +85,13 @@ export async function myUrls(req, res) {
     try {
         console.log(session)
         const userQ = await db.query(`SELECT * FROM users WHERE users.id = $1`, [session.userId])
+
         const user = userQ.rows[0]
  //       if (!user) return res.sendStatus(404)
         const shortenedUrls = await db.query(`SELECT * FROM urls WHERE urls."userId" = $1`, [session.userId])
-        if (shortenedUrls[0].id === null) shortenedUrls = []
+        //console.log(shortenedUrls)
+        if (shortenedUrls.rows[0].id === null) shortenedUrls = []
+
         const userUrls = shortenedUrls.rows.map((url) => ({
             id: url.id,
             shortUrl: url.shortUrl,
