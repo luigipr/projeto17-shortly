@@ -1,14 +1,17 @@
 import { Router } from "express"
 import { validateSchema } from "../middlewares/validateSchema.js"
 import {validateToken} from "../middlewares/validateToken.js"
-import { shortenUrl } from "../controllers/urls.controller.js"
+import { shortenUrl, getUrls, deleteUrl, openUrl, myUrls} from "../controllers/urls.controller.js"
 import { shortenSchema } from "../schemas/urls.schemas.js"
 
 
 const urlsRouter = Router()
 
-urlsRouter.post("/urls/shorten", validateSchema(shortenSchema), shortenUrl)
-//urlsRouter.post("/", validateSchema(loginSchema), signin)
+urlsRouter.post("/urls/shorten", validateToken, validateSchema(shortenSchema), shortenUrl)
+urlsRouter.get("/urls/:id", getUrls)
+urlsRouter.get("/urls/open/:shortUrl", openUrl)
+urlsRouter.delete("/urls/:id", validateToken, deleteUrl)
+urlsRouter.get("/users/me", validateToken, myUrls)
 
 
 export default urlsRouter  
