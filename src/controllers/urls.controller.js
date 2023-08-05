@@ -73,7 +73,7 @@ export async function deleteUrl(req,res) {
         const url2 = await db.query(`SELECT * FROM urls WHERE urls.id = $1 AND urls."userId" = $2`, [id, session.userId])
         if(url2.rowCount === 0) return res.sendStatus(401);
 
-        //await db.query(`DELETE FROM urls WHERE urls.id = $1`, [id])
+        await db.query(`DELETE FROM urls WHERE urls.id = $1`, [id])
 
         res.sendStatus(204)
     } catch (err) {
